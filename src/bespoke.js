@@ -1,7 +1,7 @@
 (function(moduleName, window) {
 	var from = function(selectorOrElement, selectedPlugins) {
-			var parent = selectorOrElement.blur ? selectorOrElement : document.querySelector(selectorOrElement),
-				slides = [].slice.call(parent.children, 0),
+			var parent = selectorOrElement.nodeType === 1 ? selectorOrElement : document.querySelector(selectorOrElement),
+				slides = [].filter.call(parent.children, function(el) { return el.nodeName !== 'SCRIPT'; }),
 				activeSlide = slides[0],
 				listeners = {},
 
@@ -22,18 +22,22 @@
 					removeClass(activeSlide, 'inactive');
 				},
 
-				deactivate = function(slide, index) {
+				deactivate = function(el, index) {
 					var offset = index - slides.indexOf(activeSlide),
 						offsetClass = offset > 0 ? 'after' : 'before';
 
-					['before(-\\d+)?', 'after(-\\d+)?', 'active', 'inactive'].map(removeClass.bind(0, slide));
+					['before(-\\d+)?', 'after(-\\d+)?', 'active', 'inactive'].map(removeClass.bind(null, el));
 
-					slide != activeSlide &&
-						['inactive', offsetClass, offsetClass + '-' + Math.abs(offset)].map(addClass.bind(0, slide));
+					el !== activeSlide &&
+						['inactive', offsetClass, offsetClass + '-' + Math.abs(offset)].map(addClass.bind(null, el));
 				},
 
 				slide = function(index, customData) {
-					fire('slide', createEventData(slides[index], customData)) && activate(index, customData);
+					if (arguments.length) {
+						fire('slide', createEventData(slides[index], customData)) && activate(index, customData);
+					} else {
+						return slides.indexOf(activeSlide);
+					}
 				},
 
 				step = function(offset, customData) {
@@ -47,7 +51,7 @@
 
 					return function() {
 						listeners[eventName] = listeners[eventName].filter(function(listener) {
-							return listener != callback;
+							return listener !== callback;
 						});
 					};
 				},
@@ -59,10 +63,10 @@
 						}, true);
 				},
 
-				createEventData = function(slide, eventData) {
+				createEventData = function(el, eventData) {
 					eventData = eventData || {};
-					eventData.index = slides.indexOf(slide);
-					eventData.slide = slide;
+					eventData.index = slides.indexOf(el);
+					eventData.slide = el;
 					return eventData;
 				},
 
@@ -70,20 +74,23 @@
 					on: on,
 					fire: fire,
 					slide: slide,
-					next: step.bind(0, 1),
-					prev: step.bind(0, -1),
+					next: step.bind(null, 1),
+					prev: step.bind(null, -1),
 					parent: parent,
 					slides: slides
 				};
 
 			addClass(parent, 'parent');
 
-			slides.map(function(slide) {
-				addClass(slide, 'slide');
+			slides.map(function(el) {
+				addClass(el, 'slide');
 			});
 
 			for (var pluginName in selectedPlugins) {
-				plugins[pluginName](deck, selectedPlugins[pluginName]);
+				if (!plugins[pluginName]) {
+					throw Error('Missing plugin: ' + moduleName + '-' + pluginName);
+				}
+				selectedPlugins[pluginName] !== false && plugins[pluginName](deck, selectedPlugins[pluginName]);
 			}
 
 			activate(0);
@@ -94,6 +101,8 @@
 		},
 
 		decks = [],
+
+		plugins = {},
 
 		addClass = function(el, cls) {
 			el.classList.add(moduleName + '-' + cls);
@@ -106,64 +115,12 @@
 		},
 
 		callOnAllDecks = function(method) {
-			return function(arg) {
+			return function() {
+				var args = arguments;
 				decks.map(function(deck) {
-					deck[method](arg);
+					deck[method].apply(null, args);
 				});
 			};
-		},
-
-		bindPlugin = function(pluginName) {
-			return {
-				from: function(selectorOrElement, selectedPlugins) {
-					(selectedPlugins = selectedPlugins || {})[pluginName] = true;
-					return from(selectorOrElement, selectedPlugins);
-				}
-			};
-		},
-
-		makePluginForAxis = function(axis) {
-			return function(deck) {
-				var startPosition,
-					delta;
-
-				document.addEventListener('keydown', function(e) {
-					(
-						e.which == 34 || // PAGE DOWN
-						e.which == 32 || // SPACE
-						axis == 'X' && e.which == 39 || // RIGHT
-						axis == 'Y' && e.which == 40 // BOTTOM
-					) && deck.next();
-					(
-						e.which == 33 || // PAGE UP
-						axis == 'X' && e.which == 37 || // LEFT
-						axis == 'Y' && e.which == 38 // TOP
-					) && deck.prev();
-				});
-
-				deck.parent.addEventListener('touchstart', function(e) {
-					if (e.touches.length == 1) {
-						startPosition = e.touches[0]['page' + axis];
-						delta = 0;
-					}
-				});
-
-				deck.parent.addEventListener('touchmove', function(e) {
-					if (e.touches.length == 1) {
-						e.preventDefault();
-						delta = e.touches[0]['page' + axis] - startPosition;
-					}
-				});
-
-				deck.parent.addEventListener('touchend', function() {
-					Math.abs(delta) > 50 && (delta > 0 ? deck.prev() : deck.next());
-				});
-			};
-		},
-
-		plugins = {
-			horizontal: makePluginForAxis('X'),
-			vertical: makePluginForAxis('Y')
 		};
 
 	window[moduleName] = {
@@ -171,8 +128,6 @@
 		slide: callOnAllDecks('slide'),
 		next: callOnAllDecks('next'),
 		prev: callOnAllDecks('prev'),
-		horizontal: bindPlugin('horizontal'),
-		vertical: bindPlugin('vertical'),
 		plugins: plugins
 	};
 

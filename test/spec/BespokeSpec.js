@@ -22,6 +22,8 @@
 					for (var i = 0; i < NO_OF_SLIDES; i++) {
 						slides.push(document.createElement(SLIDE_TAG));
 						article.appendChild(slides[i]);
+						// Ensure script tags are ignored
+						article.appendChild(document.createElement('script'));
 					}
 
 					document.body.appendChild(article);
@@ -151,6 +153,20 @@
 								});
 							});
 
+							it("should call 'next' with custom event data on all deck instances", function() {
+								var customEventData = { foo: 'bar' };
+
+								decks.forEach(function(deck) {
+									deck.next = sinon.spy();
+								});
+
+								bespoke.next(customEventData);
+
+								decks.forEach(function(deck) {
+									expect(deck.next.calledWith(customEventData)).toBe(true);
+								});
+							});
+
 						});
 
 						describe("prev", function() {
@@ -167,6 +183,20 @@
 								});
 							});
 
+							it("should call 'prev' with custom event data on all deck instances", function() {
+								var customEventData = { foo: 'bar' };
+
+								decks.forEach(function(deck) {
+									deck.prev = sinon.spy();
+								});
+
+								bespoke.prev(customEventData);
+
+								decks.forEach(function(deck) {
+									expect(deck.prev.calledWith(customEventData)).toBe(true);
+								});
+							});
+
 						});
 
 						describe("slide", function() {
@@ -180,6 +210,20 @@
 
 								decks.forEach(function(deck) {
 									expect(deck.slide.calledWith(0)).toBe(true);
+								});
+							});
+
+							it("should call 'slide' with custom event data on all deck instances", function() {
+								var customEventData = { foo: 'bar' };
+
+								decks.forEach(function(deck) {
+									deck.slide = sinon.spy();
+								});
+
+								bespoke.slide(0, customEventData);
+
+								decks.forEach(function(deck) {
+									expect(deck.slide.calledWith(0, customEventData)).toBe(true);
 								});
 							});
 
@@ -567,6 +611,14 @@
 
 							describe("slide", function() {
 
+								it("should return the current slide index when called without arguments", function() {
+									deck.slide(1);
+									expect(deck.slide()).toBe(1);
+
+									deck.slide(2);
+									expect(deck.slide()).toBe(2);
+								});
+
 								it("should call handler when specific slide is requested", function() {
 									var callback = sinon.spy();
 
@@ -657,96 +709,6 @@
 
 						describe("plugins", function() {
 
-							describe("shorthand plugins", function() {
-
-								describe("horizontal", function() {
-
-									var horizontal,
-										oldHorizontal;
-
-									beforeEach(function() {
-										oldHorizontal = bespoke.plugins.horizontal;
-										bespoke.plugins.horizontal = horizontal = sinon.spy();
-									});
-
-									afterEach(function() {
-										bespoke.plugins.horizontal = oldHorizontal;
-									});
-
-									it("should allow the 'horizontal' plugin using the shorthand", function() {
-										var deck = bespoke.horizontal.from("article");
-										expect(horizontal.calledWith(deck)).toBe(true);
-									});
-
-									it("should allow custom plugins to be specified", function() {
-										bespoke.plugins.testPlugin = sinon.spy();
-
-										var deck = bespoke.horizontal.from("article", { testPlugin: true });
-
-										expect(horizontal.calledWith(deck)).toBe(true);
-										expect(bespoke.plugins.testPlugin.calledWith(deck)).toBe(true);
-
-										delete bespoke.plugins.testPlugin;
-									});
-
-									it("should allow custom plugins to be specified with options", function() {
-										bespoke.plugins.testPlugin = sinon.spy();
-
-										var deck = bespoke.horizontal.from("article", { testPlugin: { foo: 'bar' } });
-
-										expect(horizontal.calledWith(deck)).toBe(true);
-										expect(bespoke.plugins.testPlugin.calledWith(deck, { foo: 'bar' })).toBe(true);
-
-										delete bespoke.plugins.testPlugin;
-									});
-
-								});
-
-								describe("vertical", function() {
-
-									var vertical,
-										oldVertical;
-
-									beforeEach(function() {
-										oldVertical = bespoke.plugins.vertical;
-										bespoke.plugins.vertical = vertical = sinon.spy();
-									});
-
-									afterEach(function() {
-										bespoke.plugins.vertical = oldVertical;
-									});
-
-									it("should allow the 'vertical' plugin using the shorthand", function() {
-										var deck = bespoke.vertical.from("article");
-										expect(vertical.calledWith(deck)).toBe(true);
-									});
-
-									it("should allow custom plugins to be specified", function() {
-										bespoke.plugins.testPlugin = sinon.spy();
-
-										var deck = bespoke.vertical.from("article", { testPlugin: true });
-
-										expect(vertical.calledWith(deck)).toBe(true);
-										expect(bespoke.plugins.testPlugin.calledWith(deck)).toBe(true);
-
-										delete bespoke.plugins.testPlugin;
-									});
-
-									it("should allow custom plugins to be specified with options", function() {
-										bespoke.plugins.testPlugin = sinon.spy();
-
-										var deck = bespoke.vertical.from("article", { testPlugin: { foo: 'bar' } });
-
-										expect(vertical.calledWith(deck)).toBe(true);
-										expect(bespoke.plugins.testPlugin.calledWith(deck, { foo: 'bar' })).toBe(true);
-
-										delete bespoke.plugins.testPlugin;
-									});
-
-								});
-
-							});
-
 							describe("custom", function() {
 
 								var testPlugin,
@@ -781,9 +743,28 @@
 									expect(testPlugin.calledWith(deck, { foo: 'bar' })).toBe(true);
 								});
 
+								it("should not run the plugin if option is 'false'", function() {
+									bespoke.from("article", { testPlugin: false });
+									expect(testPlugin.called).toBe(false);
+								});
+
 								it("should call any 'activate' event handlers immediately", function() {
 									bespoke.from("article", { onActivatePlugin: true });
 									expect(onActivate.called).toBe(true);
+								});
+
+								it("should throw an error if a plugin isn't found", function() {
+									var createDeckWithMissingPlugin = function() {
+										bespoke.from("article", { foobar: true });
+									};
+									expect(createDeckWithMissingPlugin).toThrow("Missing plugin: bespoke-foobar");
+								});
+
+								it("should throw an error if a plugin isn't found even if the plugin is disabled", function() {
+									var createDeckWithMissingDisabledPlugin = function() {
+										bespoke.from("article", { foobar: false });
+									};
+									expect(createDeckWithMissingDisabledPlugin).toThrow("Missing plugin: bespoke-foobar");
 								});
 
 							});

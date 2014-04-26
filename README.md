@@ -1,61 +1,25 @@
-[![Build Status](https://secure.travis-ci.org/markdalgleish/bespoke.js.png)](http://travis-ci.org/markdalgleish/bespoke.js)
+[![Build Status](https://secure.travis-ci.org/markdalgleish/bespoke.js.png)](http://travis-ci.org/markdalgleish/bespoke.js) [![Coverage Status](https://coveralls.io/repos/markdalgleish/bespoke.js/badge.png)](https://coveralls.io/r/markdalgleish/bespoke.js)
 
 # Bespoke.js
 
 ### DIY Presentation Micro-Framework
 
-Less than 1KB minified and gzipped, with no dependencies.
+[Bespoke.js](http://markdalgleish.com/projects/bespoke.js) is a super minimal (<1KB min'd and gzipped), modular presentation library for modern browsers, designed to foster a rich [plugin ecosystem](#plugins).
 
-Bespoke.js provides the foundation, then gets out of your way so you can focus on uniquely crafting your own personal deck style.
+The core library [sets up the presentation](#javascript), provides a simple [control API](#control-api), manages [events](#events) and adds [classes](#CSS) to the slides to allow CSS transitions.
 
-Using keyboard and touch events, Bespoke.js adds classes to your slides, while you provide the CSS transitions.
+Any other functionality, from [keyboard](https://github.com/markdalgleish/bespoke-keys) and [touch](https://github.com/markdalgleish/bespoke-touch) interactions to [bullet lists](https://github.com/markdalgleish/bespoke-bullets) and [hash routing](https://github.com/markdalgleish/bespoke-hash), is implemented as a [plugin](#plugins). Joining the Bespoke.js plugin ecosystem is simple with [Bespoke.js Plugin Generator](https://github.com/markdalgleish/generator-bespokeplugin).
 
-With its robust plugin system, new functionality can be added to Bespoke.js easily.
+## Creating a Presentation
 
-## Download
+Due to the highly modular nature of Bespoke.js, the quickest way to get started is with [Bespoke.js Generator](https://github.com/markdalgleish/generator-bespoke), a [Yeoman](http://yeoman.io) generator that scaffolds a boilerplate presentation with a [Grunt](http://gruntjs.com) build system.
 
-Download the [production version][min] or the [development version][max], or use a [package manager](#package-managers).
-
-[min]: https://raw.github.com/markdalgleish/bespoke.js/master/dist/bespoke.min.js
-[max]: https://raw.github.com/markdalgleish/bespoke.js/master/dist/bespoke.js
-
-Want a boilerplate presentation? Use the official [Bespoke.js Yeoman Generator](https://github.com/markdalgleish/generator-bespoke).
-
-Bespoke.js requires a modern browser with [ES5](http://kangax.github.com/es5-compat-table/) ([shim](https://github.com/kriskowal/es5-shim/)) and [classList](http://caniuse.com/classlist) ([shim](https://github.com/eligrey/classList.js)) support.
-
-## Demo
-
-[View the demo](http://markdalgleish.com/projects/bespoke.js) at the official [Bespoke.js project page](http://markdalgleish.com/projects/bespoke.js).
-
-### Presentations
-
- - [DIY Presentations With Bespoke.js](http://markdalgleish.com/presentations/bespoke.js/) by [Mark Dalgleish](http://twitter.com/markdalgleish)
- - [Bespoke.js: The Road to 1KB](http://markdalgleish.github.io/presentation-bespoke.js-the-road-to-1kb/) by [Mark Dalgleish](http://twitter.com/markdalgleish)
- - [Javascript's Slightly Stricter Mode](http://geelen.github.io/web-directions-talk/) by [Glen Maddern](http://twitter.com/glenmaddern)
- - [The Trials of Transition Height: Auto](http://superhighfives.github.io/tweetflight-presentation/) by [Charlie Gleason](http://twitter.com/superhighfives)
- - [Welcome Our New ES5 Overlords](http://mikemaccana.github.io/rejectjs2013) by [Mike MacCana](https://twitter.com/mikemaccana)
- - [Rapid Web App Dev With Yeoman](http://mjt01.github.io/slides-yeoman/) by [Michael Taranto](http://twitter.com/michaeltaranto)
- - [Projects vs Products](http://joho.github.io/wdyk/) by [John Barton](http://twitter.com/johnbarton)
- - [Learn You The Node.js For Much Win](http://r.va.gg/presentations/campjs-learn-you-node/) by [Rod Vagg](http://twitter.com/rvagg)
- - [A Real Database Rethink](http://r.va.gg/presentations/nodeconfeu.2013) by [Rod Vagg](http://twitter.com/rvagg)
- - [Feature Flags with Directives](http://mjt01.github.io/slides-feature-flags/) by [Michael Taranto](http://twitter.com/michaeltaranto)
- - [Introduction to hapi](http://wolfe.id.au/presentations/hapi/) by [Mark Wolfe](http://twitter.com/wolfeidau)
-
-Made a presentation with Bespoke.js? [Let me know](http://twitter.com/markdalgleish).
-
-## Getting Started
-
-The simplest way to get started is by using [generator-bespoke](https://github.com/markdalgleish/generator-bespoke), a generator for [Yeoman](http://yeoman.io) that scaffolds a boilerplate presentation.
-
-Assuming you have [Node.js](http://nodejs.org) installed:
+Assuming you have [Node.js](http://nodejs.org) installed, in a blank directory:
 
 ```bash
-$ npm install -g yo generator-bespoke
-$ mkdir my-presentation && cd $_
+$ npm install -g generator-bespoke
 $ yo bespoke
 ```
-
-The generated project includes a [Grunt](http://gruntjs.com) build system, a preview server with [LiveReload](http://livereload.com), static asset compilation ([Jade](http://jade-lang.com), [Stylus](http://learnboost.github.io/stylus) and [CoffeeScript](http://coffeescript.org)), and a [GitHub Pages](http://pages.github.com) deployment task.
 
 In your newly scaffolded project, you can use the following Grunt tasks:
 
@@ -63,63 +27,64 @@ In your newly scaffolded project, you can use the following Grunt tasks:
  * ```$ grunt deploy``` to deploy to GitHub Pages.
  * ```$ grunt``` to compile static assets to 'public'.
 
-For more detailed instructions, check out the [generator-bespoke](https://github.com/markdalgleish/generator-bespoke) repo.
+For more detailed instructions, check out the [Bespoke.js Generator](https://github.com/markdalgleish/generator-bespoke) repo.
 
-### The old fashioned way
+If you'd prefer to craft a new presentation from scratch, you can install Bespoke.js from [Bower](http://bower.io) with `bower install bespoke.js`, from [npm](http://npmjs.org) with `npm install bespoke`, or manually download either the [production version][min] or the [development version][max]. The Bespoke.js core is extremely lightweight, so you'll probably want to include some [plugins](#plugins).
 
-To create a Bespoke.js presentation by hand, follow these 3 simple steps:
-
- * Create a page with [required slide markup](#markup) and resources
- * Activate your deck via the [JavaScript API](#javascript)
- * Create a custom style sheet using the [Bespoke.js classes](#css)
-
-Need more functionality? [Use an existing plugin](#plugins), or [create a new one](#creating-plugins).
+[min]: https://raw.github.com/markdalgleish/bespoke.js/master/dist/bespoke.min.js
+[max]: https://raw.github.com/markdalgleish/bespoke.js/master/dist/bespoke.js
 
 ## Basic Usage
 
 ### Markup
 
-The tags you use are completely optional. Once a parent element is selected, the child elements become slides.
+It's completely up to you which tags you use, but the following is a good starting point:
 
 ```html
 <link rel="stylesheet" href="path/to/my/theme.css">
 
-<article>
+<article id="presentation">
   <section>Slide 1</section>
   <section>Slide 2</section>
   <section>Slide 3</section>
 </article>
 
 <script src="bespoke.min.js"></script>
+<script src="bespoke-keys.min.js"></script>
+<script src="bespoke-touch.min.js"></script>
 <script src="path/to/my/script.js"></script>
 ```
 
 ### JavaScript
 
-Decks are created by selecting the parent element with the `from(selector)` method, with optional 'horizontal' or 'vertical' event handlers.
-
-##### Horizontal Deck
-
-Uses space bar, horizontal arrows and swipes for navigation.
+Decks are created by selecting the parent element with the `from(selector[, plugins])` method. Once a parent element is selected, the child elements become slides.
 
 ```js
-bespoke.horizontal.from('article');
+var deck = bespoke.from('#presentation', {
+  // Plugins:
+  keys: true,
+  touch: true
+});
 ```
 
-##### Vertical Deck
+#### Control API
 
-Uses space bar, vertical arrows and swipes for navigation.
-
-```js
-bespoke.vertical.from('article');
-```
-
-##### Minimal Deck
-
-*For the absolute purist only.* Minimal decks provide a [simple control API](#control-api) with *zero default event handlers*. Key presses and swipes have no effect, it's up to you to implement your own interactions from scratch.
+Programmatically control the state of the presentation.
 
 ```js
-bespoke.from('article');
+var deck = bespoke.from('#presentation');
+
+// Next slide
+deck.next();
+
+// Previous slide
+deck.prev();
+
+// Go to a specific slide
+deck.slide(0);
+
+// Get the active slide index
+deck.slide(); // 0
 ```
 
 ### CSS
@@ -161,29 +126,45 @@ To create your own custom deck styles, Bespoke.js provides the necessary classes
    </tr>
 </table>
 
-If you've created an awesome theme you'd like me to share, [let me know](http://twitter.com/markdalgleish).
-
 ## Plugins
 
-The following plugins are available for Bespoke.js.
+### Using Plugins
+
+Plugins are specified when instantiating your presentation, like so:
+
+```js
+var deck = bespoke.from('#presentation', {
+  // Plugins:
+  keys: true,
+  touch: true
+});
+```
 
 ### Official Plugins
 
-All official plugins can be installed from Bower or npm, e.g. `$ bower install bespoke-bullets` or `$ npm install bespoke-hash`
+All official plugins can be installed from Bower or npm, e.g. `$ bower install bespoke-keys` or `$ npm install bespoke-touch`
 
+ - [bespoke-keys](https://github.com/markdalgleish/bespoke-keys) for keyboard interaction.
+ - [bespoke-touch](https://github.com/markdalgleish/bespoke-touch) for touch interaction.
  - [bespoke-bullets](https://github.com/markdalgleish/bespoke-bullets) for animated bullet lists.
  - [bespoke-scale](https://github.com/markdalgleish/bespoke-scale) for responsive slide scaling.
  - [bespoke-hash](https://github.com/markdalgleish/bespoke-hash) for hash routing.
  - [bespoke-state](https://github.com/markdalgleish/bespoke-state) for slide-specific deck styles.
  - [bespoke-progress](https://github.com/markdalgleish/bespoke-progress) for progress bars.
+ - [bespoke-forms](https://github.com/markdalgleish/bespoke-forms) for form element support.
  - [bespoke-loop](https://github.com/markdalgleish/bespoke-loop) for looped presentations.
  - [bespoke-vcr](https://github.com/markdalgleish/bespoke-vcr) for recording and playback.
 
 ### Third-Party Plugins
 
- - [bespoke-dir](https://github.com/ryanseddon/bespoke-dir) by [@ryanseddon](http://twitter.com/ryanseddon), for direction-based deck classes.
- - [bespoke-spotlight](https://github.com/mobz/bespoke-spotlight) by [@mobz](http://twitter.com/mobz), for quick-searching slide content.
- - [bespoke-blackout](https://github.com/originell/bespoke-blackout) by [@originell](http://twitter.com/originell), for temporarily blacking out the screen.
+ - [bespoke-fx](https://github.com/ebow/bespoke-fx) by [@ebow](https://github.com/ebow), for configurable slide transitions.
+ - [bespoke-dir](https://github.com/ryanseddon/bespoke-dir) by [@ryanseddon](https://github.com/ryanseddon), for direction-based deck classes.
+ - [bespoke-spotlight](https://github.com/mobz/bespoke-spotlight) by [@mobz](https://github.com/mobz), for quick-searching slide content.
+ - [bespoke-blackout](https://github.com/originell/bespoke-blackout) by [@originell](https://github.com/originell), for temporarily blacking out the screen.
+ - [bespoke-secondary](https://github.com/joelpurra/bespoke-secondary) by [@joelpurra](https://github.com/joelpurra), for slide notes in a secondary window.
+ - [bespoke-advanced](https://github.com/joelpurra/bespoke-advanced) by [@joelpurra](https://github.com/joelpurra), to automatically advance slides on a timer.
+ - [bespoke-jumpy](https://github.com/joelpurra/bespoke-jumpy) by [@joelpurra](https://github.com/joelpurra), for keyboard shortcuts to jump straight to specific slides.
+ - [bespoke-run](https://github.com/mcollina/bespoke-run) by [@mcollina](https://github.com/mcollina), for running `<code>` snippets.
 
 If you'd like your plugin added to this list, [let me know](http://twitter.com/markdalgleish).
 
@@ -194,22 +175,7 @@ If you'd like your plugin added to this list, [let me know](http://twitter.com/m
 If you already have a reference to a DOM node, you can pass it directly to the `from` method.
 
 ```js
-bespoke.horizontal.from(element);
-```
-
-### Control API
-
-Programmatically control your presentation, or implement a custom interface when using a [minimal deck](#minimal-deck).
-
-```js
-// Next slide
-bespoke.next();
-
-// Previous slide
-bespoke.prev();
-
-// Go to a specific slide
-bespoke.slide(0);
+bespoke.from(element);
 ```
 
 ### Deck Instances
@@ -220,19 +186,17 @@ Individual deck instances can be created and controlled separately.
 
 ```js
 // First deck instance
-var one = bespoke.horizontal.from('#deck-one');
+var one = bespoke.from('#deck-one');
 one.next();
 one.prev();
 one.slide(0);
 
 // Second deck instance
-var two = bespoke.horizontal.from('#deck-two');
+var two = bespoke.from('#deck-two');
 two.next();
 two.prev();
 two.slide(0);
 ```
-
-The global `bespoke` API interacts with all deck instances. For example, calling `bespoke.next()` is actually calling `next()` on all decks.
 
 ##### Deck Instance Properties
 
@@ -250,8 +214,8 @@ The following properties are available on each instance.
     <td>Previous slide.</td>
   </tr>
   <tr>
-    <td><strong>slide(<em>index[, eventData]</em>)</strong></td>
-    <td>Activate a specific slide by index.</td>
+    <td><strong>slide([<em>index[, eventData]]</em>)</strong></td>
+    <td>Get or set the active slide index.</td>
   </tr>
   <tr>
     <td><strong>on(<em>event, callback</em>)</strong></td>
@@ -282,7 +246,7 @@ deck.on(eventName, function(event) {
   event.slide; // Relevant slide
   event.index; // Index of relevant slide
 
-  // Prevent default functionality (for user interaction events only)
+  // Prevent default functionality (for deck interaction events only)
   return false;
 });
 ```
@@ -302,9 +266,9 @@ In most cases, you will only need to use these standard events.
   </tr>
 </table>
 
-##### User Interaction Events
+##### Deck Interaction Events
 
-These events are fired when the user has interacted with the presentation, but *before* their interaction has had any effect.
+These events are fired when the deck has been interacted with, but *before* the interaction has had any effect.
 
 This allows you to intercept the default behaviour by returning `false` from the event handler.
 
@@ -338,8 +302,6 @@ off();
 
 ## Creating Plugins
 
-If you need to expand upon the core Bespoke.js feature set, additional functionality can be packaged up as plugins.
-
 Want a boilerplate plugin? Use the official [Bespoke.js Plugin Generator](https://github.com/markdalgleish/generator-bespokeplugin).
 
 If you'd like to learn by example, check out the [list of existing plugins](#plugins).
@@ -363,8 +325,10 @@ The plugin can now be provided to the second parameter of the `from(selector[, p
 
 ```js
 // Using the plugin
-bespoke.horizontal.from('article', { myPlugin: true });
+bespoke.from('#presentation', { myPlugin: true });
 ```
+
+*Note: Your plugin won't run if the option value provided is `false`.*
 
 ### Plugins with Options
 
@@ -382,7 +346,7 @@ bespoke.plugins.myPlugin = function(deck, options) {
 };
 
 // Using the plugin with options
-bespoke.from('article', {
+bespoke.from('#presentation', {
   myPlugin: {
     showTotal: true
   }
@@ -415,39 +379,23 @@ bespoke.plugins.myPlugin = function(deck) {
 };
 ```
 
+## Presentations
 
-## Package managers
+ - [Build Wars: Gulp vs Grunt](http://markdalgleish.github.io/presentation-build-wars-gulp-vs-grunt/) by [Mark Dalgleish](http://twitter.com/markdalgleish)
+ - [Bespoke.js: The Road to 1KB](http://markdalgleish.github.io/presentation-bespoke.js-the-road-to-1kb/) by [Mark Dalgleish](http://twitter.com/markdalgleish)
+ - [DIY Presentations With Bespoke.js](http://markdalgleish.com/presentations/bespoke.js/) by [Mark Dalgleish](http://twitter.com/markdalgleish)
+ - [Javascript's Slightly Stricter Mode](http://geelen.github.io/web-directions-talk/) by [Glen Maddern](http://twitter.com/glenmaddern)
+ - [The Trials of Transition Height: Auto](http://superhighfives.github.io/tweetflight-presentation/) by [Charlie Gleason](http://twitter.com/superhighfives)
+ - [Welcome Our New ES5 Overlords](http://mikemaccana.github.io/rejectjs2013) by [Mike MacCana](https://twitter.com/mikemaccana)
+ - [Rapid Web App Dev With Yeoman](http://mjt01.github.io/slides-yeoman/) by [Michael Taranto](http://twitter.com/michaeltaranto)
+ - [Projects vs Products](http://joho.github.io/wdyk/) by [John Barton](http://twitter.com/johnbarton)
+ - [Learn You The Node.js For Much Win](http://r.va.gg/presentations/campjs-learn-you-node/) by [Rod Vagg](http://twitter.com/rvagg)
+ - [A Real Database Rethink](http://r.va.gg/presentations/nodeconfeu.2013) by [Rod Vagg](http://twitter.com/rvagg)
+ - [Feature Flags with Directives](http://mjt01.github.io/slides-feature-flags/) by [Michael Taranto](http://twitter.com/michaeltaranto)
+ - [Introduction to hapi](http://wolfe.id.au/presentations/hapi/) by [Mark Wolfe](http://twitter.com/wolfeidau)
+ - [How to Cook a Graph Database in a Night](http://nodejsconfit.levelgraph.io) by [Matteo Collina](http://twitter.com/matteocollina)
 
-### Bower
-
-Bespoke.js can be installed from [Bower](http://twitter.github.com/bower/) using the following command:
-
-```bash
-$ bower install bespoke.js
-```
-
-### npm
-
-Bespoke.js can be installed from [npm](http://npmjs.org/) using the following command:
-
-```bash
-$ npm install bespoke
-```
-
-The Bespoke.js npm package is designed for use with [browserify](http://browserify.org/).
-
-For example, a presentation using [bespoke-bullets](https://github.com/markdalgleish/bespoke-bullets) and [bespoke-hash](https://github.com/markdalgleish/bespoke-hash) would look like this:
-
-```js
-require('bespoke');
-require('bespoke-bullets');
-require('bespoke-hash');
-
-bespoke.horizontal.from('article', {
-  bullets: 'li',
-  hash: true
-});
-```
+Made a presentation with Bespoke.js? [Let me know](http://twitter.com/markdalgleish).
 
 ## Questions?
 
@@ -455,6 +403,4 @@ Contact me on GitHub or Twitter: [@markdalgleish](http://twitter.com/markdalglei
 
 ## License
 
-Copyright 2013, Mark Dalgleish  
-This content is released under the MIT license  
-http://markdalgleish.mit-license.org
+[MIT License](http://markdalgleish.mit-license.org)
